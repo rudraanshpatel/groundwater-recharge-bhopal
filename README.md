@@ -161,8 +161,11 @@ uvicorn backend.app:app
 ```
 
 Steps whose inputs are missing are skipped with a warning, so you can add layers as they
-arrive. At 30 m the study area is about 8,700 × 7,900 pixels. If your laptop struggles, set
-`GWR_RESOLUTION=60` or `90` for a demo run.
+arrive. At 30 m the study area is about 8,700 × 7,900 pixels: a full run took about 11 minutes
+and peaked at about 6 GB of RAM in testing (most of it in drainage and lineament extraction). On
+a machine with 8 GB or less, set `GWR_RESOLUTION=60` (roughly a quarter of the memory). The web
+app itself stays fast at any resolution, because large regions are read at reduced resolution
+(`MAX_ANALYSIS_PIXELS` in `config.py`).
 
 ---
 

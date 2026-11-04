@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Groundwater Recharge Zones</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <aside id="sidebar">
+    <header>
+      <h1>Groundwater Recharge Zones</h1>
+      <p class="sub">Bhopal, Raisen and Narmadapuram districts</p>
+    </header>
+
+    <section>
+      <h2>1. Region</h2>
+      <label for="region-type">Unit</label>
+      <select id="region-type">
+        <option value="study_area">Whole study area</option>
+        <option value="tehsil">Tehsil</option>
+        <option value="watershed">Watershed</option>
+      </select>
+      <label for="region-id">Region</label>
+      <select id="region-id"></select>
+    </section>
+
+    <section>
+      <h2>2. Season</h2>
+      <div id="season-buttons" class="segmented" role="radiogroup" aria-label="Season"></div>
+      <p id="season-note" class="note"></p>
+    </section>
+
+    <section>
+      <h2>3. Layer weights</h2>
+      <div id="weight-sliders"></div>
+      <div class="row">
+        <button type="button" id="weights-reset" class="secondary">Default weights</button>
+        <button type="button" id="weights-ahp" class="secondary">Use AHP matrix</button>
+      </div>
+      <details id="ahp-details">
+        <summary>AHP pairwise matrix and consistency</summary>
+        <div id="ahp-matrix"></div>
+        <p id="ahp-cr" class="note"></p>
+      </details>
+    </section>
+
+    <section>
+      <button type="button" id="run" class="primary">Generate recharge map</button>
+      <p id="status" class="note" role="status"></p>
+    </section>
+
+    <section id="results" hidden>
+      <h2>Result</h2>
+      <p id="result-title" class="note"></p>
+      <table id="stats-table" class="stats">
+        <thead><tr><th>Class</th><th>Area (km²)</th><th>Share</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="row">
+        <button type="button" id="download-tif" class="secondary">GeoTIFF</button>
+        <button type="button" id="download-pdf" class="secondary">PDF report</button>
+      </div>
+      <button type="button" id="compare-seasons" class="secondary wide">Compare all seasons</button>
+      <div id="season-compare"></div>
+    </section>
+
+    <footer class="note">
+      Method: AHP-weighted overlay of 7 thematic layers, each ranked 1 (poor) to 5 (excellent).
+      Only rainfall changes between seasons.
+    </footer>
+  </aside>
+
+  <main id="map" aria-label="Map"></main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/map.js"></script>
+  <script src="js/ahp.js"></script>
+  <script src="js/temporal.js"></script>
+</body>
+</html>

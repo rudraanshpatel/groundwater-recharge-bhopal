@@ -94,6 +94,18 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+### Get the data
+
+The processed and raw data are too large for GitHub. To run the project on real data, download the
+data folder from Google Drive:
+
+**[Project data (Google Drive)](https://drive.google.com/drive/folders/1fQPq_4LZCuQLyWbn8kxlXo7qyZnqQWAV?usp=drive_link)**
+
+Extract it into the repository so the files sit under `data/` (for example `data/raw/dem/`,
+`data/raw/geology/lithology.gpkg`). Check the layout with `python scripts/verify_data.py`, then
+follow [Run on real data](#run-on-real-data). To download every layer from its original source
+instead, see [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md).
+
 ### Quick start with synthetic data
 
 Checks that everything works before you download anything. The data is **invented**, so never use
@@ -117,7 +129,7 @@ pytest
 
 ## Data
 
-The full download walkthrough is in [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md). Everything goes
+The quickest route is the [Google Drive folder](https://drive.google.com/drive/folders/1fQPq_4LZCuQLyWbn8kxlXo7qyZnqQWAV?usp=drive_link) above. The full download walkthrough from the original sources is in [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md). Everything goes
 under `data/raw/`; `scripts/prepare_data.py` converts each download and `scripts/verify_data.py`
 checks it covers the three districts.
 

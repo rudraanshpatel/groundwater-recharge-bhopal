@@ -6,7 +6,7 @@ Usage (from the repository root, any OS):
     python scripts/prepare_data.py watersheds       # HydroBASINS lev10 -> boundaries/watersheds.gpkg
     python scripts/prepare_data.py rain             # IMD .grd files -> imd/rain.nc
     python scripts/prepare_data.py soil             # download SoilGrids clips -> soilgrids/*.tif
-    python scripts/prepare_data.py geology FILE [FILE ...] [--field COLUMN]
+    python scripts/prepare_data.py geology FILE_OR_FOLDER [...] [--field COLUMN]
     python scripts/prepare_data.py lineaments FILE [FILE ...]
 
 Every step reads from and writes to data/raw (or GWR_DATA_DIR/raw, or
@@ -220,13 +220,24 @@ def _read_many(paths: list[str]):
     import pandas as pd
     from backend import config
 
+    files = []
+    for p in map(Path, paths):      # a folder means every shapefile / gpkg inside it
+        if p.is_dir():
+            found = sorted(p.rglob("*.shp")) + sorted(p.rglob("*.gpkg"))
+            if not found:
+                sys.exit(f"No .shp or .gpkg files in {p}")
+            files += found
+        else:
+            files.append(p)
     frames = []
-    for p in paths:
+    for p in files:
         gdf = gpd.read_file(p)
         if gdf.crs is None:
             sys.exit(f"{p} has no coordinate system (missing .prj file?)")
         frames.append(gdf.to_crs(config.CRS_GEOGRAPHIC))
-        print(f"Read {p}: {len(gdf)} features")
+        print(f"Read {p.name}: {len(gdf)} features")
+    if len(files) > 1:
+        print(f"Merged {len(files)} files")
     return gpd.GeoDataFrame(pd.concat(frames, ignore_index=True), crs=config.CRS_GEOGRAPHIC)
 
 

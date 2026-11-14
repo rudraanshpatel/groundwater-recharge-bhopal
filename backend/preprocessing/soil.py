@@ -8,6 +8,11 @@ The three depth slices are averaged with thickness weights (5, 10, 15 cm)
 to a 0-30 cm value, converted to percent, normalised so sand+silt+clay =
 100, and classified with the USDA texture triangle. Ranks per texture class
 are in config.SOIL_TEXTURES (coarse, sandy soils infiltrate fastest).
+
+SoilGrids leaves water bodies and built-up areas blank (e.g. Bhopal city,
+the Bhopal lakes, Tawa reservoir, the Narmada channel), about 4% of the
+districts. Those gaps are filled with the nearest mapped texture class so
+the overlay has no holes there.
 """
 
 from __future__ import annotations
@@ -25,6 +30,17 @@ log = logging.getLogger(__name__)
 
 DEPTHS = {"0-5cm": 5.0, "5-15cm": 10.0, "15-30cm": 15.0}   # slice -> thickness (cm)
 FRACTIONS = ("clay", "sand", "silt")
+
+
+def fill_nearest(classes: np.ndarray, nodata: int = 0) -> np.ndarray:
+    """Replace nodata pixels with the value of the nearest valid pixel."""
+    from scipy import ndimage
+
+    missing = classes == nodata
+    if not missing.any() or missing.all():
+        return classes
+    idx = ndimage.distance_transform_edt(missing, return_distances=False, return_indices=True)
+    return classes[tuple(idx)]
 
 
 def usda_texture_class(sand: np.ndarray, silt: np.ndarray, clay: np.ndarray) -> np.ndarray:
@@ -96,4 +112,8 @@ def process(grid: ReferenceGrid | None = None, soil_dir: Path = config.RAW_SOIL_
     config.ensure_dirs()
     frac = {f: depth_weighted_fraction(grid, f, soil_dir) for f in FRACTIONS}
     texture = usda_texture_class(frac["sand"], frac["silt"], frac["clay"])
+    gaps = float((texture == 0).mean()) * 100
+    if gaps:
+        log.info("Filling %.1f%% of soil pixels (water / built-up) from the nearest soil", gaps)
+        texture = fill_nearest(texture)
     return {"soil": write_raster(config.layer_path("soil"), texture, grid, nodata=0)}

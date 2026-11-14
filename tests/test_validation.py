@@ -42,3 +42,14 @@ def test_download_wells_pages_and_dedupes(tmp_path, monkeypatch):
     from backend import config
     out = pd.read_csv(config.RAW_DIR / "wells" / "wells_raw.csv")
     assert len(out) == download_wells.PAGE_SIZE + 3
+
+
+def test_exclusion_reasons():
+    from backend.validation import exclusion_reason
+
+    base = {"years": 5, "rise_m": 3.0}
+    assert exclusion_reason({**base, "stationName": "Berasia(D)"}) == "deep well / piezometer"
+    assert exclusion_reason({**base, "stationName": "Sanchi Pz"}) == "deep well / piezometer"
+    assert exclusion_reason({**base, "stationName": "Raisen", "years": 2}).startswith("fewer")
+    assert exclusion_reason({**base, "stationName": "X", "rise_m": 40.9}).startswith("rise beyond")
+    assert exclusion_reason({**base, "stationName": "Raisen"}) == ""

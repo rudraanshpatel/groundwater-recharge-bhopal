@@ -12,7 +12,6 @@ from pyproj import Transformer
 from backend import config
 
 STUDY_AREA_ID = "study_area"
-REGION_TYPES = ("study_area", "tehsil", "watershed")
 
 
 class RegionNotFound(KeyError):

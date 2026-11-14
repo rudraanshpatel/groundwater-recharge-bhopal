@@ -2,8 +2,9 @@
 
 Input:  a polygon file of lithology units, data/raw/geology/lithology.gpkg,
         with a text attribute config.GEOLOGY_FIELD (e.g. "Deccan Trap basalt",
-        "Narmada alluvium"). Source: GSI Bhukosh 1:50K, or polygons digitised
-        from the GSI District Resource Maps.
+        "Narmada alluvium"). Source: GSI 1:50K lithology from the National
+        Geoscience Data Repository (NGDR), one shapefile per toposheet, merged
+        by scripts/prepare_data.py geology.
 Output: processed/layers/geology.tif (uint8 recharge rank 1..5, 0 = nodata)
 
 Lithology names vary a lot between sources, so ranks come from keyword

@@ -31,7 +31,6 @@ from backend.grid import ReferenceGrid, reproject_array, write_raster
 
 log = logging.getLogger(__name__)
 
-IMD_MISSING = -999.0
 _VAR_CANDIDATES = ("rain", "rf", "RAINFALL", "precip", "pr")
 
 

@@ -109,6 +109,10 @@ pytest
 
 ## Data download
 
+**Step-by-step Windows guide:** [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md). It covers the website
+for each layer, `scripts/prepare_data.py` (turns the downloads into the files below) and
+`scripts/verify_data.py` (checks each layer covers the study area).
+
 All files go under `data/raw/` (the default `GWR_DATA_DIR` is `data/`). Download box:
 **76.5–79.0°E, 21.9–24.0°N** (WGS84). Analysis grid: **EPSG:32643 (UTM 43N), 30 m**.
 

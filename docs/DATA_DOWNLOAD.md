@@ -22,7 +22,7 @@ data\raw\
 ├── worldcover\   2 .tif tiles
 ├── soilgrids\    9 .tif files
 ├── geology\      lithology.gpkg
-└── lineaments\   lineaments.gpkg                  (optional)
+└── lineaments\   lineaments.gpkg                  (mapped lines, combined with DEM lineaments)
 ```
 
 Check everything at once at any time:
@@ -42,8 +42,8 @@ districts (from `tehsils.gpkg`, so do step 1 first), or over the whole box until
 | 3 | Rainfall | IMD Pune | No | 20 min |
 | 4 | Land cover | ESA WorldCover | No | 10 min |
 | 5 | Soil | ISRIC SoilGrids (one command) | No | 10 min |
-| 6 | Geology | GSI Bhukosh | Free registration | varies |
-| 7 | Lineaments | optional, Bhukosh | Free registration | skip for now |
+| 6 | Geology | GSI NGDR (geodataindia.gov.in) | Free registration | 30 min |
+| 7 | Lineaments + faults | GSI NGDR | Free registration | 10 min |
 
 ---
 
@@ -184,57 +184,49 @@ in the browser and save the file under the name shown, in `data\raw\soilgrids\`:
 - `silt_5-15cm.tif`: <https://maps.isric.org/mapserv?map=/map/silt.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=silt_5-15cm_mean&FORMAT=GEOTIFF_INT16&SUBSET=long(76.5,79.0)&SUBSET=lat(21.9,24.0)&SUBSETTINGCRS=http://www.opengis.net/def/crs/EPSG/0/4326&OUTPUTCRS=http://www.opengis.net/def/crs/EPSG/0/4326>
 - `silt_15-30cm.tif`: <https://maps.isric.org/mapserv?map=/map/silt.map&SERVICE=WCS&VERSION=2.0.1&REQUEST=GetCoverage&COVERAGEID=silt_15-30cm_mean&FORMAT=GEOTIFF_INT16&SUBSET=long(76.5,79.0)&SUBSET=lat(21.9,24.0)&SUBSETTINGCRS=http://www.opengis.net/def/crs/EPSG/0/4326&OUTPUTCRS=http://www.opengis.net/def/crs/EPSG/0/4326>
 
-## 6. Geology (GSI Bhukosh)
+## 6. Geology (GSI NGDR, 1:50K lithology)
 
-1. Open <https://bhukosh.gsi.gov.in/Bhukosh/Public> and **register** (free; activation is usually
-   the same day). The site is sometimes down. If so, try again later in the day.
-2. Log in and open the **Map** viewer. In the layer list, open **Geology** and switch on
-   **Lithology 1:50K** (if 1:50K will not download, use **1:2M**).
-3. Use the download / spatial query tool. Select by district (**Bhopal, Raisen, Narmadapuram**) or
-   draw a rectangle over the box, and request **Shapefile**. Bigger requests may be emailed to you
-   or need approval.
-4. Extract the zip(s) anywhere, e.g. `data\raw\geology\bhukosh\`.
-5. Look at the columns and pick the one that names the rock type:
-
-   ```powershell
-   python scripts\prepare_data.py geology data\raw\geology\bhukosh\YOUR_FILE.shp
-   ```
-
-   It lists every text column with example values and suggests likely ones. Then run it again with
-   the column (several files can be given at once, e.g. one per district):
+1. Open <https://geodataindia.gov.in> (National Geoscience Data Repository) and **register** (free).
+2. Log in and open the **NGDR Map Service**. Open the **Search** panel (magnifier icon).
+3. Choose **Map services: Geology**, **Sub group: Geology 50k**, **Layers: LITHOLOGY**,
+   **State: Madhya Pradesh**, then the districts **Bhopal, Raisen, Hoshangabad**.
+4. Download the results as shapefiles. They arrive as one file per 1:50K toposheet, for example
+   `lithology_gcs_ngdr_55E07.shp`.
+5. Put every downloaded file (or the unzipped folders) in `data\raw\geology\ngdr\`. Merge them
+   and pick the rock-type column (`lithologic` in the NGDR files):
 
    ```powershell
-   python scripts\prepare_data.py geology data\raw\geology\bhukosh\YOUR_FILE.shp --field COLUMN_NAME
+   python scripts\prepare_data.py geology data\raw\geology\ngdr --field lithologic
    ```
 
-   This writes `data\raw\geology\lithology.gpkg` and prints the recharge rank (1 to 5) each rock
-   name will get.
+   Run it once without `--field` to list every text column with example values. The command
+   writes `data\raw\geology\lithology.gpkg` and prints the recharge rank (1 to 5) each rock name
+   will get.
 6. Verify:
 
    ```powershell
    python scripts\verify_data.py geology
    ```
 
-   Expect about 100% coverage of the districts. A WARN lists rock names that match no keyword:
+   Expect about 98% coverage of the districts. A WARN lists rock names that match no keyword:
    they get rank 2 by default. Add keywords for them to `GEOLOGY_RANKS` in `backend\config.py` if
    the default is wrong.
 
-**If Bhukosh will not cooperate before the deadline:** digitise 4 to 6 polygons in QGIS from the
-geology map in the GSI District Resource Maps or the CGWB District Groundwater Brochures (Deccan
-Trap basalt, Vindhyan sandstone/shale, Narmada alluvium, Gondwana sandstone, Bijawar), with a text
-column holding the rock name, then run step 5 on that file. See `plans/data-sources.md` section 6
-for the step-by-step.
+## 7. Lineaments and faults (GSI NGDR, 1:250K)
 
-## 7. Lineaments (optional)
+1. In the same NGDR **Search** panel choose **Map services: Geomorphology**, layer
+   **LINEAMENT_250K**, **State: Madhya Pradesh**, and download the shapefile. Download the
+   **FAULT** layer the same way.
+2. Put both in `data\raw\lineaments\ngdr\` and merge them:
 
-Skip this for now: if `data\raw\lineaments\lineaments.gpkg` is missing, the pipeline extracts
-lineaments from the DEM. For the endterm, mapped lineaments from Bhukosh (**Structure →
-Lineament**, same download steps as geology) are better:
+   ```powershell
+   python scripts\prepare_data.py lineaments data\raw\lineaments\ngdr
+   python scripts\verify_data.py lineaments
+   ```
 
-```powershell
-python scripts\prepare_data.py lineaments data\raw\lineaments\bhukosh\YOUR_FILE.shp
-python scripts\verify_data.py lineaments
-```
+By default the pipeline **combines** these mapped lines with lineaments it extracts from the DEM
+(`GWR_LINEAMENT_SOURCE=combine`). Set it to `mapped` to use only the GSI lines, or `dem` to ignore
+them. Without a mapped file, only the DEM lineaments are used.
 
 ---
 

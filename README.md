@@ -1,47 +1,58 @@
 # Groundwater Recharge Zone Identifier: Bhopal Region
 
 A web application that maps **groundwater recharge potential** for the Bhopal, Raisen and
-Narmadapuram (Hoshangabad) districts of Madhya Pradesh. Pick a tehsil or watershed and a
-season, and the app runs an **AHP-weighted overlay** of seven thematic layers and returns a
-five-class recharge potential map (Very High to Very Low), with area statistics and
-GeoTIFF / PDF downloads. No ArcGIS or other desktop GIS is needed.
+Narmadapuram (Hoshangabad) districts of Madhya Pradesh, India.
 
-**What is new here:** most recharge-zone studies (e.g. Shukla & Sarup, 2019) produce one
-static map. This tool adds a **temporal toggle**: the rainfall layer is computed separately for
-the pre-monsoon, monsoon and post-monsoon seasons from IMD daily gridded data, so you can see
-how recharge potential shifts through the year, with class breaks held fixed so the seasons
-are directly comparable.
+Seven thematic layers are combined with an **AHP-weighted overlay** on a common 30 m grid to give
+a five-class map (Very Low to Very High). Pick the whole study area, a tehsil or a watershed, pick a
+season, and the app returns the zone map, area statistics and GeoTIFF / PDF downloads. The whole
+pipeline is open-source Python: no ArcGIS or other desktop GIS is needed.
 
-> Screenshots: _add `docs/screenshot-map.png` and `docs/screenshot-seasons.png` here after the
-> first run on real data._
+**What is new:** most recharge-zone studies produce one static map. This tool adds a **season
+toggle** (Annual, Pre-monsoon, Monsoon, Post-monsoon) built from IMD daily rainfall, with class
+breaks held fixed so the seasons are directly comparable, and lets you edit the AHP weights live.
 
----
+## Results at a glance
+
+| | |
+|---|---|
+| Study area | 76.5–79.0°E, 21.9–24.0°N; 15 tehsils, 483 watersheds |
+| Grid | WGS 84 / UTM zone 43N (EPSG:32643), 30 m |
+| AHP consistency | λmax = 7.091, CI = 0.015, **CR = 0.012** (limit 0.10) |
+| Validation | 60 CGWB observation wells, Spearman ρ = **0.36**, p = 0.005 |
+
+Median well recharge (water-level rise × specific yield, pre- to post-monsoon) rises through every
+class:
+
+| Zone | Very Low | Low | Moderate | High | Very High |
+|---|---|---|---|---|---|
+| Median recharge (m) | 0.089 | 0.111 | 0.122 | 0.136 | 0.238 |
 
 ## Features
 
-- **Region selection:** whole study area, any tehsil (GADM level 3) or watershed (HydroBASINS).
+- **Region selection:** whole study area, any tehsil (GADM level 3) or watershed (HydroBASINS level 10).
 - **Seven thematic layers:** rainfall, geology, slope, soil texture, land use / land cover,
   drainage density and lineament density, each reclassified to ranks 1 (poor) to 5 (excellent).
-- **AHP weighting:** Saaty pairwise matrix, principal-eigenvector weights, consistency ratio
-  check (CR < 0.10). Weights can be adjusted live with sliders.
-- **Season toggle:** Annual, Pre-monsoon (Mar-May), Monsoon (Jun-Sep), Post-monsoon (Oct-Dec),
-  plus a side-by-side comparison of class shares across seasons.
-- **Interactive map:** Leaflet, with OSM / satellite / topographic basemaps, every thematic layer
-  as a toggleable overlay, and a legend.
+- **AHP weighting:** Saaty pairwise matrix, principal-eigenvector weights and consistency ratio,
+  adjustable live with sliders.
+- **Season toggle** with a side-by-side comparison of class shares and rainfall across seasons.
+- **Interactive map:** Leaflet with OSM, satellite and topographic basemaps, every thematic layer as
+  a toggleable overlay, and a legend.
 - **Exports:** palette GeoTIFF of the zones and a two-page PDF report (map, weights, CR, areas).
-- **Synthetic demo data** so the whole system runs before the real downloads are ready.
+- **Validation** against CGWB well levels using the water table fluctuation method.
+- **Synthetic demo data** so the whole system runs before any real download.
 
 ## Tech stack
 
 | Part | Tools |
 |---|---|
-| Raster / vector processing | rasterio, GDAL, geopandas, shapely, pyproj |
+| Raster / vector processing | rasterio (GDAL), geopandas, shapely, pyproj |
 | Terrain analysis | pysheds (flow direction / accumulation), scikit-image (lineaments) |
 | Rainfall | imdlib, xarray, pykrige (ordinary kriging), IDW fallback |
 | Weighting and overlay | NumPy (AHP eigenvector method, weighted sum) |
+| Validation | pandas, SciPy (Spearman), matplotlib |
 | API | FastAPI + uvicorn |
-| Frontend | Leaflet 1.9, plain HTML/CSS/JS (no build step) |
-| Reports | matplotlib (PDF), rasterio (GeoTIFF) |
+| Frontend | Leaflet 1.9, plain HTML / CSS / JS (no build step) |
 
 ## Repository layout
 
@@ -49,32 +60,31 @@ are directly comparable.
 groundwater-recharge-bhopal/
 ├── backend/
 │   ├── app.py               FastAPI app (API + serves the frontend)
-│   ├── config.py            study area, CRS, paths, seasons, reclassification rules
+│   ├── config.py            study area, CRS, paths, seasons, ranks, specific yields
 │   ├── ahp.py               AHP weights and consistency ratio
 │   ├── overlay.py           reclassification, weighted overlay, zone classification
+│   ├── validation.py        comparison with CGWB well levels
 │   ├── export.py            GeoJSON, GeoTIFF and PDF outputs
-│   ├── grid.py              reference grid and raster I/O helpers
+│   ├── grid.py              reference grid and raster I/O
 │   ├── regions.py           tehsil / watershed boundaries
-│   ├── pipeline.py          command-line pipeline (raw data -> zones)
-│   └── preprocessing/
-│       ├── dem.py           slope, drainage density, lineament density
-│       ├── rainfall.py      IMD seasonal totals + kriging
-│       ├── lulc.py          ESA WorldCover land cover
-│       ├── soil.py          SoilGrids texture (USDA triangle)
-│       └── geology.py       lithology polygons -> ranks
+│   ├── pipeline.py          command-line pipeline (raw data -> zones -> validation)
+│   └── preprocessing/       dem.py, rainfall.py, lulc.py, soil.py, geology.py
 ├── frontend/                index.html, css/, js/ (map.js, ahp.js, temporal.js)
-├── notebooks/exploration.ipynb
-├── scripts/make_synthetic_data.py
-├── tests/                   pytest suite (unit + end-to-end)
+├── scripts/
+│   ├── prepare_data.py      turns raw downloads into the files the pipeline reads
+│   ├── verify_data.py       PASS / WARN / FAIL coverage check per layer
+│   ├── download_wells.py    CGWB well levels from the India-WRIS API
+│   └── make_synthetic_data.py
+├── notebooks/exploration.ipynb   figures of every layer, zones and the GWRPI histogram
+├── docs/DATA_DOWNLOAD.md    step-by-step data download guide (Windows / PowerShell)
+├── tests/                   pytest suite (unit + end-to-end on synthetic data)
 └── data/                    local data, not committed
 ```
 
----
-
 ## Setup
 
-Python 3.10 or newer. GDAL comes bundled with the rasterio wheels, so a plain `pip` install
-works on Windows, macOS and Linux.
+Python 3.10 or newer. GDAL comes bundled with the rasterio wheels, so a plain `pip` install works
+on Windows, macOS and Linux.
 
 ```bash
 git clone https://github.com/rudraanshpatel/groundwater-recharge-bhopal.git
@@ -84,14 +94,14 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Quick start with synthetic data (2 minutes)
+### Quick start with synthetic data
 
-This checks that everything works before you download anything. The data is **invented**,
-so never use these maps in a report.
+Checks that everything works before you download anything. The data is **invented**, so never use
+these maps in a report.
 
 ```bash
-python scripts/make_synthetic_data.py          # writes data/demo/raw
-export GWR_DATA_DIR=data/demo GWR_RESOLUTION=250    # Windows PowerShell: $env:GWR_DATA_DIR="data/demo"; $env:GWR_RESOLUTION="250"
+python scripts/make_synthetic_data.py                  # writes data/demo/raw
+export GWR_DATA_DIR=data/demo GWR_RESOLUTION=250       # PowerShell: $env:GWR_DATA_DIR="data/demo"; $env:GWR_RESOLUTION="250"
 python -m backend.pipeline all
 uvicorn backend.app:app --reload
 ```
@@ -99,169 +109,122 @@ uvicorn backend.app:app --reload
 Open http://127.0.0.1:8000, pick a region, press **Generate recharge map**, then try the season
 buttons. API docs are at http://127.0.0.1:8000/docs.
 
-### Run the tests
+### Tests
 
 ```bash
 pytest
 ```
 
----
+## Data
 
-## Data download
+The full download walkthrough is in [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md). Everything goes
+under `data/raw/`; `scripts/prepare_data.py` converts each download and `scripts/verify_data.py`
+checks it covers the three districts.
 
-**Step-by-step Windows guide:** [docs/DATA_DOWNLOAD.md](docs/DATA_DOWNLOAD.md). It covers the website
-for each layer, `scripts/prepare_data.py` (turns the downloads into the files below) and
-`scripts/verify_data.py` (checks each layer covers the study area).
-
-All files go under `data/raw/` (the default `GWR_DATA_DIR` is `data/`). Download box:
-**76.5–79.0°E, 21.9–24.0°N** (WGS84). Analysis grid: **EPSG:32643 (UTM 43N), 30 m**.
-
-| Layer | Source | Put it here |
+| Layer | Source | Native resolution |
 |---|---|---|
-| Boundaries | [GADM 4.1 India](https://gadm.org/download_country.html), level 3, filter to Bhopal / Raisen / Hoshangabad | `data/raw/boundaries/tehsils.gpkg` (field `NAME_3`) |
-| Watersheds | [HydroBASINS](https://www.hydrosheds.org/products/hydrobasins) Asia, level 10 | `data/raw/boundaries/watersheds.gpkg` (field `HYBAS_ID`) |
-| DEM | Copernicus GLO-30, 9 tiles N21–N23 × E076–E078 (AWS, no login) or Bhuvan CartoDEM | `data/raw/dem/*.tif` |
-| Rainfall | IMD 0.25° daily gridded rainfall 2014–2024 | `data/raw/imd/rain.nc` (see below) |
-| LULC | [ESA WorldCover 2021](https://esa-worldcover.org/en/data-access), tiles N21E075 and N21E078 | `data/raw/worldcover/*.tif` |
-| Soil | [ISRIC SoilGrids](https://www.isric.org/explore/soilgrids) clay / sand / silt, 0–5, 5–15, 15–30 cm | `data/raw/soilgrids/{clay,sand,silt}_{0-5cm,5-15cm,15-30cm}.tif` |
-| Geology | [GSI Bhukosh](https://bhukosh.gsi.gov.in/Bhukosh/Public) lithology 1:50K, or polygons digitised from GSI District Resource Maps | `data/raw/geology/lithology.gpkg` (text field `lithology`) |
-| Lineaments (optional) | Bhukosh / NRSC lineament lines. If absent, they are auto-extracted from the DEM | `data/raw/lineaments/lineaments.gpkg` |
+| Tehsil boundaries | [GADM 4.1](https://gadm.org/download_country.html), level 3 | vector |
+| Watersheds | [HydroBASINS](https://www.hydrosheds.org/products/hydrobasins), level 10 | vector |
+| DEM | Copernicus GLO-30 (via OpenTopography or AWS) | 30 m |
+| Rainfall | IMD daily gridded rainfall, 2014–2024 | 0.25° |
+| Land use / land cover | [ESA WorldCover 2021](https://esa-worldcover.org) | 10 m |
+| Soil texture | [ISRIC SoilGrids](https://www.isric.org/explore/soilgrids) clay / sand / silt, 0–30 cm | 250 m |
+| Geology | GSI 1:50K lithology, [NGDR](https://geodataindia.gov.in) | vector |
+| Lineaments | GSI 1:250K lineaments and faults (NGDR), combined with DEM-extracted lineaments | vector |
+| Validation wells | CGWB groundwater levels via India-WRIS | points |
 
-**DEM tiles:**
-
-```bash
-mkdir -p data/raw/dem && cd data/raw/dem
-for lat in 21 22 23; do for lon in 076 077 078; do
-  n="Copernicus_DSM_COG_10_N${lat}_00_E${lon}_00_DEM"
-  curl -O "https://copernicus-dem-30m.s3.amazonaws.com/${n}/${n}.tif"
-done; done
-```
-
-**Rainfall** (downloads the IMD binary files with `imdlib` and saves a study-area NetCDF):
+### Run on real data
 
 ```bash
-python -m backend.pipeline download-rain
-```
-
-**SoilGrids** (clips straight from the global VRTs with GDAL):
-
-```bash
-mkdir -p data/raw/soilgrids && cd data/raw/soilgrids
-for p in clay sand silt; do for d in 0-5cm 5-15cm 15-30cm; do
-  gdal_translate -projwin_srs EPSG:4326 -projwin 76.5 24.0 79.0 21.9 \
-    /vsicurl/https://files.isric.org/soilgrids/latest/data/${p}/${p}_${d}_mean.vrt ${p}_${d}.tif
-done; done
-```
-
-**Geology:** the lithology names are matched by keyword (`alluvium`, `basalt`, `sandstone`,
-`shale`, `granite` ...) to ranks in `config.GEOLOGY_RANKS`. Unmatched names are logged, so extend
-that table if your source uses other terms.
-
-### Run the pipeline on real data
-
-```bash
-python -m backend.pipeline all       # or one step at a time: dem, rainfall, lulc, soil, geology, rank, overlay
+python -m backend.pipeline all       # or one step: dem, rainfall, lulc, soil, geology, rank, overlay
+python scripts/download_wells.py     # CGWB well levels -> data/raw/wells/wells_raw.csv
+python -m backend.pipeline validate  # -> data/outputs/validation_{wells.csv,summary.json,boxplot.png}
 uvicorn backend.app:app
 ```
 
-Steps whose inputs are missing are skipped with a warning, so you can add layers as they
-arrive. At 30 m the study area is about 8,700 × 7,900 pixels: a full run took about 11 minutes
-and peaked at about 6 GB of RAM in testing (most of it in drainage and lineament extraction). On
-a machine with 8 GB or less, set `GWR_RESOLUTION=60` (roughly a quarter of the memory). The web
-app itself stays fast at any resolution, because large regions are read at reduced resolution
-(`MAX_ANALYSIS_PIXELS` in `config.py`).
+Steps whose inputs are missing are skipped with a warning, so layers can be added as they arrive.
+At 30 m the study area is about 8,700 × 7,900 pixels: a full run takes about 11 minutes and peaks at
+about 6 GB of RAM (mostly drainage and lineament extraction). On a machine with 8 GB or less, set
+`GWR_RESOLUTION=60`.
 
----
-
-### Validate against CGWB wells
-
-```bash
-python scripts/download_wells.py          # India-WRIS API, 3 districts, 2014-2024 -> data/raw/wells/wells_raw.csv
-python -m backend.pipeline validate       # -> data/outputs/validation_*.{csv,json,png}
-```
-
-For every well, the mean pre-monsoon (May) minus post-monsoon (November) depth to water is the
-seasonal rise. The step reports the rise per recharge zone, a box plot, and the Spearman
-correlation between GWRPI and rise. A good map shows the rise growing from Very Low to Very High.
-
----
+| Environment variable | Default | Purpose |
+|---|---|---|
+| `GWR_DATA_DIR` | `data` | data folder |
+| `GWR_RESOLUTION` | `30` | grid size in metres |
+| `GWR_RAINFALL_MODE` | `relative` | rank rainfall within each season, or `absolute` mm breaks |
+| `GWR_LINEAMENT_SOURCE` | `combine` | `combine` (mapped + DEM), `mapped` or `dem` |
 
 ## Methodology
 
 ### 1. Common reference grid
 
-Every layer is reprojected onto one grid (EPSG:32643, 30 m, snapped to the study-area bounding
-box). Continuous data use bilinear resampling and categorical data (land cover) use mode, so the
-overlay is a plain pixel-by-pixel operation with no misalignment.
+Every layer is reprojected onto one grid (EPSG:32643, 30 m, snapped to whole pixels over the study
+area box). Continuous data use bilinear resampling, land cover uses mode, and vector layers are
+rasterized onto the same grid, so the overlay is a plain pixel-by-pixel operation.
 
 ### 2. Thematic layers
 
 | Layer | Derived how | Why it matters |
 |---|---|---|
-| Rainfall | IMD daily grids → per-year seasonal totals → long-term mean → ordinary kriging to 1 km → bilinear to 30 m | Water available for recharge; the only seasonal layer |
-| Geology | Lithology polygons rasterised and ranked by rock type | Primary porosity and permeability of the aquifer |
-| Slope | Horn's 3×3 method on the DEM, degrees | Gentle slopes hold water long enough to infiltrate |
-| Soil | Thickness-weighted 0–30 cm clay/sand/silt → USDA texture class | Infiltration capacity |
+| Rainfall | Per-year seasonal totals → long-term mean → ordinary kriging to 1 km → bilinear to 30 m | Water available for recharge; the only seasonal layer |
+| Geology | Lithology polygons rasterized and ranked by rock type | Porosity and permeability of the aquifer |
+| Slope | Horn's 3 × 3 method on the DEM, degrees | Gentle slopes hold water long enough to infiltrate |
+| Soil | Thickness-weighted 0–30 cm clay / sand / silt → USDA texture class; gaps over water and built-up filled from the nearest class | Infiltration capacity |
 | LULC | ESA WorldCover classes | Vegetation and water bodies aid recharge, built-up surfaces block it |
-| Drainage density | Depression filling, D8 flow accumulation, streams above 1 km² catchment, stream length per km² | High density means fast runoff, less infiltration |
-| Lineament density | Mapped lineaments, or multi-azimuth hillshade + Canny edges + Hough transform; line length per km² | Fractures are preferential recharge paths |
+| Drainage density | Sink filling, D8 flow accumulation, streams above 1 km² catchment, length per km² in a 5 km window | Dense drainage means fast runoff |
+| Lineament density | GSI lineaments and faults plus multi-azimuth hillshade → Canny edges → Hough lines; length per km² | Fractures are preferential recharge paths |
 
 ### 3. Reclassification
 
-Each layer is converted to a rank from 1 (poor) to 5 (excellent). The thresholds live in
-`backend/config.py` (`CONTINUOUS_RULES`, `LULC_RANKS`, `SOIL_TEXTURES`, `GEOLOGY_RANKS`), for example
-slope 0–2° → 5, 2–5° → 4, 5–10° → 3, 10–20° → 2, > 20° → 1.
+Each layer becomes a rank from 1 (poor) to 5 (excellent). Thresholds live in `backend/config.py`
+(`CONTINUOUS_RULES`, `LULC_RANKS`, `SOIL_TEXTURES`, `GEOLOGY_RANKS`); for example slope 0–2° → 5,
+2–5° → 4, 5–10° → 3, 10–20° → 2, > 20° → 1.
 
-Rainfall is ranked **within each season** by default: the season's rainfall over the study area is
-split into quintiles (ranks 1 to 5). Fixed thresholds do not work across seasons here. Pre- and
-post-monsoon totals are only about 10–90 mm against 760–1,580 mm in the monsoon, so any threshold
-that separates monsoon rainfall puts the whole dry season in the lowest rank and the dry-season
-maps become a uniform "Very Low". The absolute totals are still reported per season (in the app's
-season comparison and in `processed/ranked/rainfall_breaks.json`). Set
-`RAINFALL_SEASON_MODE = "absolute"` in `config.py` (or `GWR_RAINFALL_MODE=absolute`) to use the
-fixed mm thresholds instead.
+Rainfall is ranked **within each season** (quintiles of that season's rainfall). Pre- and
+post-monsoon totals are only about 10–90 mm against 760–1,580 mm in the monsoon, so fixed
+thresholds would make every dry-season map uniformly Very Low. Absolute totals are still reported
+in the season comparison.
 
 ### 4. AHP weights
 
-The Analytic Hierarchy Process (Saaty, 1980) turns pairwise judgements ("rainfall is twice as
-important as slope") into weights:
+The Analytic Hierarchy Process (Saaty, 1980) turns pairwise judgements into weights:
 
-1. Build an n × n reciprocal matrix **A** with aᵢⱼ on the 1–9 scale and aⱼᵢ = 1/aᵢⱼ.
+1. Build a 7 × 7 reciprocal matrix **A** on Saaty's 1–9 scale, with aⱼᵢ = 1/aᵢⱼ.
 2. The weights are the normalised principal eigenvector of **A**; λmax is its eigenvalue.
-3. Consistency index CI = (λmax − n)/(n − 1); consistency ratio CR = CI / RI, with RI = 1.32 for
-   n = 7. The matrix is accepted when CR < 0.10.
-
-Default weights (starting values for this study area; check them against the papers you cite):
+3. CI = (λmax − n)/(n − 1) and CR = CI / RI, with RI = 1.32 for n = 7. Accepted when CR < 0.10.
 
 | Rainfall | Geology | Slope | Soil | LULC | Drainage density | Lineament density |
 |---|---|---|---|---|---|---|
 | 0.25 | 0.20 | 0.15 | 0.12 | 0.10 | 0.10 | 0.08 |
 
-`backend/ahp.py` contains a Saaty-scale pairwise matrix whose eigenvector reproduces these within
-±0.01, with **CR = 0.012**. Run `python -m backend.ahp` to print it. Replace the matrix with your
-own judgements and cite the sources you base them on.
+The matrix in `backend/ahp.py` reproduces these weights within ±0.01 with CR = 0.012. Run
+`python -m backend.ahp` to print it.
 
 ### 5. Weighted overlay and zoning
-
-The Groundwater Recharge Potential Index is
 
 ```
 GWRPI = Σ wᵢ × rankᵢ        (Σ wᵢ = 1, so GWRPI ranges from 1 to 5)
 ```
 
-GWRPI is split into five classes: Very Low, Low, Moderate, High and Very High. By default the
-breaks are the quintiles of the **annual** map, saved once and reused for every season and
-region, which keeps all maps comparable. Fixed, equal-interval and Jenks natural breaks are
-also available (`--classification` on the pipeline, `classification` in the API).
+GWRPI is split into five classes using the quintiles of the **annual** map, saved once and reused
+for every season and region so all maps stay comparable. Fixed, equal-interval and Jenks breaks
+are also available (`--classification` on the pipeline, `classification` in the API).
 
 ### 6. Temporal variation
 
-Only rainfall changes between seasons at present; all other layers are static, and the app says
-so. Each season map therefore shows where recharge potential is highest *within* that season, and
-the season comparison adds the mean rainfall of each season to show how much water is available. Planned extensions: seasonal NDVI from Sentinel-2, season-specific AHP weights, and
-validation against CGWB pre- and post-monsoon well levels.
+Only rainfall changes between seasons; the other six layers are static. Seasons follow IMD:
+Pre-monsoon (Mar–May), Monsoon (Jun–Sep), Post-monsoon (Oct–Dec), plus Annual.
 
----
+### 7. Validation
+
+For each CGWB well, the mean May (pre-monsoon) minus November (post-monsoon) depth to water gives
+the seasonal rise. Raw rise is misleading across rock types: the same recharge lifts the water
+table about five times more in basalt (specific yield ≈ 0.02) than in alluvium (≈ 0.10). So each
+well's rise is multiplied by the specific yield of its lithology (GEC-2015 norms, in
+`config.SPECIFIC_YIELD`), the water table fluctuation method. Deep wells and piezometers, wells
+with fewer than 3 years of paired readings and implausible rises are excluded, leaving 60 of 94
+wells. The Spearman correlation between GWRPI and recharge is 0.36 (p = 0.005); raw rise alone
+gives no agreement (ρ = −0.15).
 
 ## API
 
@@ -276,8 +239,6 @@ validation against CGWB pre- and post-monsoon well levels.
 | GET | `/layers/{layer}` | One thematic layer as ranked GeoJSON |
 | POST | `/export/geotiff`, `/export/pdf` | Downloads |
 
-Example:
-
 ```bash
 curl -X POST http://127.0.0.1:8000/analyze -H "Content-Type: application/json" \
   -d '{"region_type": "tehsil", "region_id": "tehsil-4", "season": "monsoon"}'
@@ -285,20 +246,22 @@ curl -X POST http://127.0.0.1:8000/analyze -H "Content-Type: application/json" \
 
 ## Limitations
 
+- AHP weights are expert judgement; a sensitivity analysis would show how much the map depends on them.
+- Inputs range from 10 m (land cover) to about 27 km (rainfall); the map is best read at watershed scale.
+- Copernicus GLO-30 is a surface model, so trees and buildings slightly bias slope and drainage.
+- DEM-extracted lineaments can include roads and field edges; they are combined with GSI mapped lines.
+- Specific yield in the validation comes from the geology layer, which is also a map input.
 - GADM tehsil boundaries follow Census 2011, so newer tehsils are missing.
-- Auto-extracted lineaments are provisional; mapped NRSC / GSI lineaments are better.
-- IMD rainfall is 0.25° (about 27 km); interpolation smooths it, it does not add detail.
-- The map shows **potential**, not measured recharge. Validate against CGWB well data before
-  drawing conclusions.
+- The map shows recharge **potential**, not measured recharge.
 
 ## References
 
-- Shukla, S. & Sarup, J. (2019). _Add the full title, journal and DOI of the Bhopal-region recharge
-  study this project builds on._
 - Saaty, T. L. (1980). _The Analytic Hierarchy Process._ McGraw-Hill.
-- Horn, B. K. P. (1981). Hill shading and the reflectance map. _Proc. IEEE_, 69(1), 14–47.
+- Horn, B. K. P. (1981). Hill shading and the reflectance map. _Proceedings of the IEEE_, 69(1), 14–47.
 - Pai, D. S. et al. (2014). Development of a new high spatial resolution (0.25° × 0.25°) long period
   daily gridded rainfall data set over India. _Mausam_, 65(1), 1–18.
+- Central Ground Water Board (2017). _Report of the Ground Water Resource Estimation Committee
+  (GEC-2015)._ Ministry of Water Resources, Government of India.
 
 ## License
 

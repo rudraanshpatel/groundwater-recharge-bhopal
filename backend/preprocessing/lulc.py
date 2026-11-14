@@ -30,13 +30,6 @@ def reclassify_lulc(classes: np.ndarray, ranks: dict[int, int] = config.LULC_RAN
     return out
 
 
-def class_areas(classes: np.ndarray, pixel_area_km2: float) -> dict[str, float]:
-    """Area (km^2) of each LULC class present in the array."""
-    codes, counts = np.unique(classes[classes > 0], return_counts=True)
-    return {config.LULC_NAMES.get(int(c), str(int(c))): float(n * pixel_area_km2)
-            for c, n in zip(codes, counts)}
-
-
 def process(grid: ReferenceGrid | None = None, lulc_dir: Path = config.RAW_LULC_DIR) -> dict[str, Path]:
     """Mosaic WorldCover tiles onto the reference grid with mode resampling."""
     grid = grid or ReferenceGrid.default()

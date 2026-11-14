@@ -9,10 +9,11 @@ Methods
   and accumulation (pysheds), streams where upstream area exceeds
   STREAM_THRESHOLD_KM2, then stream length per unit area (km/km^2) in a
   moving window.
-- Lineament density: if a mapped lineament file (Bhukosh/NRSC) exists it is
-  used. Otherwise lineaments are auto-extracted from multi-azimuth hillshades
-  with Canny edges and a probabilistic Hough transform, and short segments are
-  dropped. Then line length per unit area, same window as drainage.
+- Lineament density: lineaments are auto-extracted from multi-azimuth
+  hillshades with Canny edges and a probabilistic Hough transform, and short
+  segments are dropped. A mapped line file (e.g. GSI faults) is added to them,
+  or used alone, per config.LINEAMENT_SOURCE. Then line length per unit area,
+  same window as drainage.
 """
 
 from __future__ import annotations
@@ -226,13 +227,21 @@ def rasterize_lineaments(path: Path | str, grid: ReferenceGrid) -> np.ndarray:
 
 def compute_lineament_density(grid: ReferenceGrid, dem: np.ndarray,
                               lineament_file: Path = config.RAW_LINEAMENT_FILE) -> np.ndarray:
-    """Lineament density (km/km^2), from mapped lines if available."""
-    if Path(lineament_file).exists():
-        log.info("Using mapped lineaments from %s", lineament_file)
+    """Lineament density (km/km^2) from DEM-extracted and/or mapped lines."""
+    source = config.LINEAMENT_SOURCE
+    mapped = Path(lineament_file).exists() and source != "dem"
+    if mapped and source == "mapped":
+        log.info("Using mapped lineaments only from %s", lineament_file)
         lines = rasterize_lineaments(lineament_file, grid)
     else:
-        log.info("No mapped lineament file; auto-extracting from DEM hillshades (provisional)")
+        log.info("Auto-extracting lineaments from DEM hillshades%s",
+                 "" if mapped else " (provisional; no mapped line file)")
         lines = extract_lineaments(dem, grid.resolution)
+        if mapped:
+            extra = rasterize_lineaments(lineament_file, grid)
+            log.info("Adding mapped lines from %s (%.0f km)", lineament_file,
+                     extra.sum() * grid.resolution / 1000)
+            lines = lines | extra
     valid = np.isfinite(dem)
     return line_density(np.where(lines, grid.resolution, 0.0), valid, grid.resolution)
 

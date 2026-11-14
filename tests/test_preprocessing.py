@@ -102,3 +102,27 @@ def test_idw_exact_at_points_and_bounded():
     out = idw(x, y, z, np.array([0.0, 500.0]), np.array([0.0, 500.0]))
     assert out[0, 0] == pytest.approx(10.0)
     assert 10 <= out[1, 1] <= 30
+
+
+def test_lineament_density_combines_dem_and_mapped(tmp_path, monkeypatch):
+    import numpy as np
+    from backend import config
+    from backend.preprocessing import dem as dem_mod
+
+    class G:
+        resolution = 30.0
+        shape = (40, 40)
+    a = np.zeros(G.shape, bool); a[10, :] = True
+    b = np.zeros(G.shape, bool); b[:, 20] = True
+    monkeypatch.setattr(dem_mod, "extract_lineaments", lambda d, r: a)
+    monkeypatch.setattr(dem_mod, "rasterize_lineaments", lambda p, g: b)
+    seen = {}
+    monkeypatch.setattr(dem_mod, "line_density", lambda lines, valid, res: seen.setdefault("l", lines))
+    f = tmp_path / "faults.gpkg"
+    f.write_text("x")
+    dem = np.ones(G.shape)
+    for mode, expected in [("combine", a | b), ("mapped", b), ("dem", a)]:
+        seen.clear()
+        monkeypatch.setattr(config, "LINEAMENT_SOURCE", mode)
+        dem_mod.compute_lineament_density(G, dem, lineament_file=f)
+        assert np.array_equal(seen["l"] > 0, expected), mode

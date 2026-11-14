@@ -213,6 +213,30 @@ GEOLOGY_RANKS = [
 ]
 GEOLOGY_DEFAULT_RANK = 2      # lithology text that matches no keyword
 
+# Specific yield (fraction) by lithology keyword, used only by the well
+# validation to turn water-level rise into recharge (water-table fluctuation
+# method). Approximate values after CGWB's GEC-2015 norms; first match wins.
+SPECIFIC_YIELD = [
+    ("alluvium", 0.10),
+    ("alluvial", 0.10),
+    ("laterite", 0.025),
+    ("weathered", 0.025),
+    ("vesicular", 0.025),
+    ("deccan", 0.02),
+    ("basalt", 0.02),
+    ("trap", 0.02),
+    ("gondwana", 0.03),
+    ("sandstone", 0.03),
+    ("limestone", 0.02),
+    ("shale", 0.015),
+    ("quartzite", 0.015),
+    ("phyllite", 0.015),
+    ("bijawar", 0.015),
+    ("granite", 0.015),
+    ("gneiss", 0.015),
+]
+SPECIFIC_YIELD_DEFAULT = 0.02
+
 # ---------------------------------------------------------------------------
 # Recharge potential classes
 # ---------------------------------------------------------------------------

@@ -210,6 +210,17 @@ GEOLOGY_RANKS = [
     ("granite", 1),
     ("gneiss", 1),
     ("massive", 1),
+    # Names in the GSI/NGDR 1:50K lithology of Bhopal, Raisen and Hoshangabad.
+    # Order matters: "sandstone" (above) must match before "sand", and
+    # "conglomerate" before "clay".
+    ("dolomite", 3),
+    ("dolerite", 1),         # dykes and sills: massive intrusive
+    ("phyllite", 1),
+    ("tuff", 2),
+    ("conglomerate", 2),
+    ("sand", 5),             # unconsolidated valley sand
+    ("silt", 3),
+    ("clay", 1),
 ]
 GEOLOGY_DEFAULT_RANK = 2      # lithology text that matches no keyword
 
@@ -234,6 +245,13 @@ SPECIFIC_YIELD = [
     ("bijawar", 0.015),
     ("granite", 0.015),
     ("gneiss", 0.015),
+    ("dolomite", 0.02),
+    ("dolerite", 0.01),
+    ("tuff", 0.015),
+    ("conglomerate", 0.03),
+    ("sand", 0.16),
+    ("silt", 0.08),
+    ("clay", 0.03),
 ]
 SPECIFIC_YIELD_DEFAULT = 0.02
 

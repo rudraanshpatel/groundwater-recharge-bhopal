@@ -33,7 +33,7 @@ from pydantic import BaseModel, Field
 from backend import config, export, regions
 from backend.ahp import AHPError, compute_ahp, default_result, normalize_weights
 from backend.overlay import (
-    analyze_region, available_layers, read_ranked_region, zone_statistics,
+    analyze_region, available_layers, load_rainfall_breaks, read_ranked_region, zone_statistics,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -140,6 +140,8 @@ def get_config():
         "layers": [{"id": n, "label": config.LAYER_LABELS[n]} for n in config.LAYERS],
         "default_weights": config.DEFAULT_WEIGHTS,
         "classes": config.RECHARGE_CLASSES,
+        "rainfall_mode": config.RAINFALL_SEASON_MODE,
+        "rainfall_classes": load_rainfall_breaks(),
     }
 
 

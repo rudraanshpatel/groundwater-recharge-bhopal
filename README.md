@@ -197,8 +197,16 @@ overlay is a plain pixel-by-pixel operation with no misalignment.
 
 Each layer is converted to a rank from 1 (poor) to 5 (excellent). The thresholds live in
 `backend/config.py` (`CONTINUOUS_RULES`, `LULC_RANKS`, `SOIL_TEXTURES`, `GEOLOGY_RANKS`), for example
-slope 0–2° → 5, 2–5° → 4, 5–10° → 3, 10–20° → 2, > 20° → 1. Rainfall uses **the same thresholds
-for every season**, so a dry season genuinely ranks lower instead of being re-scaled.
+slope 0–2° → 5, 2–5° → 4, 5–10° → 3, 10–20° → 2, > 20° → 1.
+
+Rainfall is ranked **within each season** by default: the season's rainfall over the study area is
+split into quintiles (ranks 1 to 5). Fixed thresholds do not work across seasons here. Pre- and
+post-monsoon totals are only about 10–90 mm against 760–1,580 mm in the monsoon, so any threshold
+that separates monsoon rainfall puts the whole dry season in the lowest rank and the dry-season
+maps become a uniform "Very Low". The absolute totals are still reported per season (in the app's
+season comparison and in `processed/ranked/rainfall_breaks.json`). Set
+`RAINFALL_SEASON_MODE = "absolute"` in `config.py` (or `GWR_RAINFALL_MODE=absolute`) to use the
+fixed mm thresholds instead.
 
 ### 4. AHP weights
 
@@ -236,7 +244,8 @@ also available (`--classification` on the pipeline, `classification` in the API)
 ### 6. Temporal variation
 
 Only rainfall changes between seasons at present; all other layers are static, and the app says
-so. Planned extensions: seasonal NDVI from Sentinel-2, season-specific AHP weights, and
+so. Each season map therefore shows where recharge potential is highest *within* that season, and
+the season comparison adds the mean rainfall of each season to show how much water is available. Planned extensions: seasonal NDVI from Sentinel-2, season-specific AHP weights, and
 validation against CGWB pre- and post-monsoon well levels.
 
 ---

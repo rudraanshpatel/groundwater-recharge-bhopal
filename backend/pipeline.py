@@ -9,6 +9,7 @@ Usage (from the repository root):
     python -m backend.pipeline rank           # reclassify layers to ranks 1..5
     python -m backend.pipeline overlay        # weighted overlay + zones per season
     python -m backend.pipeline download-rain  # fetch IMD rainfall with imdlib
+    python -m backend.pipeline validate       # compare zones with CGWB well levels
 
 Steps whose raw inputs are missing are skipped with a warning, so you can
 build the map up layer by layer as data arrives.
@@ -56,6 +57,20 @@ def _run_step(step: str, grid: ReferenceGrid, args) -> bool:
             for season, res in results.items():
                 summary = ", ".join(f"{s['name']} {s['percent']:.1f}%" for s in res["stats"])
                 log.info("%-13s %s", season, summary)
+        elif step == "validate":
+            from backend.validation import validate
+            s = validate()
+            log.info("Validation (%s map): %d wells with pre- and post-monsoon readings",
+                     s["season"], s["wells"])
+            for z in s["zones"]:
+                if z["wells"]:
+                    log.info("  %-9s %3d wells, mean rise %5.2f m, mean post-monsoon depth %5.2f m",
+                             z["name"], z["wells"], z["mean_rise_m"], z["mean_post_depth_m"])
+            if "spearman_gwrpi_vs_rise" in s:
+                r = s["spearman_gwrpi_vs_rise"]
+                log.info("  Spearman GWRPI vs rise: rho = %.3f (p = %.4f)", r["rho"], r["p_value"])
+            log.info("  Details: %s (validation_wells.csv, validation_summary.json, validation_boxplot.png)",
+                     config.OUTPUT_DIR)
         elif step == "download-rain":
             from backend.preprocessing import rainfall
             rainfall.download_imd()
@@ -70,7 +85,7 @@ def _run_step(step: str, grid: ReferenceGrid, args) -> bool:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("step", choices=["all", *PREPROCESS_STEPS, "rank", "overlay", "download-rain"])
+    parser.add_argument("step", choices=["all", *PREPROCESS_STEPS, "rank", "overlay", "validate", "download-rain"])
     parser.add_argument("--interp", choices=["kriging", "idw"], default=config.RAINFALL_INTERP_METHOD,
                         help="rainfall interpolation method")
     parser.add_argument("--classification", choices=["fixed", "quantile", "equal", "jenks"],

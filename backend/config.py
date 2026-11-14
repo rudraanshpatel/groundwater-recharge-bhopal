@@ -35,7 +35,7 @@ RAW_IMD_DIR = RAW_DIR / "imd"                      # imdlib download folder (yea
 RAW_LULC_DIR = RAW_DIR / "worldcover"              # ESA WorldCover tiles (*.tif)
 RAW_SOIL_DIR = RAW_DIR / "soilgrids"               # {clay,sand,silt}_{depth}.tif
 RAW_GEOLOGY_FILE = RAW_DIR / "geology" / "lithology.gpkg"
-RAW_LINEAMENT_FILE = RAW_DIR / "lineaments" / "lineaments.gpkg"  # optional (Bhukosh / NRSC / NGDR faults)
+RAW_LINEAMENT_FILE = RAW_DIR / "lineaments" / "lineaments.gpkg"  # optional (GSI NGDR lineaments + faults)
 # How the lineament layer is built when a mapped line file exists:
 #   "combine": DEM-extracted lineaments plus the mapped lines (default; NGDR
 #              only offers faults, which are far sparser than lineaments)

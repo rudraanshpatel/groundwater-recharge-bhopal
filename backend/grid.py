@@ -84,13 +84,6 @@ class ReferenceGrid:
             prof.update(tiled=True, blockxsize=256, blockysize=256)
         return prof
 
-    def xy_coords(self) -> tuple[np.ndarray, np.ndarray]:
-        """1-D arrays of pixel-centre x (columns) and y (rows) coordinates."""
-        res = self.resolution
-        xs = self.transform.c + res * (np.arange(self.width) + 0.5)
-        ys = self.transform.f - res * (np.arange(self.height) + 0.5)
-        return xs, ys
-
     def matches(self, path: Path | str) -> bool:
         """True if the raster at ``path`` sits exactly on this grid."""
         with rasterio.open(path) as src:

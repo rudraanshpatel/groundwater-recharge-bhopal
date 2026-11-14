@@ -338,7 +338,12 @@ def check_soil(rep: Report):
             sums[depth] = np.nansum(parts, axis=0)[np.all(np.isfinite(parts), axis=0)]
     if coverage:
         worst = min(coverage, key=coverage.get)
-        _check_coverage(rep, coverage[worst], f"{where} (worst file: {worst})")
+        pct = coverage[worst]
+        if 90 <= pct < MIN_COVERAGE:
+            rep.ok(f"{pct:.1f}% of sample points over {where} have data. SoilGrids leaves water and "
+                   "built-up areas blank; the pipeline fills them from the nearest soil")
+        else:
+            _check_coverage(rep, pct, f"{where} (worst file: {worst})")
     for depth, s in sums.items():
         if len(s):
             med = np.median(s)

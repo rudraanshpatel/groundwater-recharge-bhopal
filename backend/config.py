@@ -136,10 +136,21 @@ CONTINUOUS_RULES = {
     "drainage_density": {"breaks": [1.0, 2.0, 3.0, 4.0], "ranks": [5, 4, 3, 2, 1]},
     # km/km^2; fractures are recharge pathways
     "lineament_density": {"breaks": [0.25, 0.5, 1.0, 1.5], "ranks": [1, 2, 3, 4, 5]},
-    # mm per season. The SAME breaks are used for every season so that the
-    # seasonal maps are directly comparable (a dry season ranks low).
+    # mm per season. Used only when RAINFALL_SEASON_MODE = "absolute".
     "rainfall": {"breaks": [100, 400, 800, 1100], "ranks": [1, 2, 3, 4, 5]},
 }
+
+# How rainfall is ranked for each season:
+#   "relative": quintiles of that season's own rainfall over the study area,
+#               so every season map shows where recharge is best IN that
+#               season. Pre- and post-monsoon totals (about 10-90 mm) all fall
+#               below the lowest absolute break, which would make those maps
+#               a uniform "Very Low". Absolute totals are still reported per
+#               season (processed/ranked/rainfall_breaks.json, the API and
+#               the season comparison table).
+#   "absolute": the fixed mm breaks in CONTINUOUS_RULES["rainfall"] for every
+#               season.
+RAINFALL_SEASON_MODE = os.environ.get("GWR_RAINFALL_MODE", "relative")
 
 # ESA WorldCover class code -> rank
 LULC_RANKS = {

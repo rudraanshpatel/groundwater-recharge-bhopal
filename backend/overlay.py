@@ -9,10 +9,11 @@
 3. GWRPI is cut into five zones: 1 Very Low, 2 Low, 3 Moderate, 4 High,
    5 Very High.
 
-For seasonal comparison the class breaks must stay the same across seasons;
-otherwise every season would show 20% "Very High" and the comparison would be
-meaningless. The pipeline therefore computes breaks once from the annual map
-and saves them (processed/zones/class_breaks.json).
+For seasonal comparison the zone breaks stay the same across seasons; the
+pipeline computes them once from the annual map and saves them
+(processed/zones/class_breaks.json). Rainfall itself is ranked within each
+season by default (config.RAINFALL_SEASON_MODE), because dry-season totals
+are far below any threshold that suits the monsoon.
 """
 
 from __future__ import annotations
@@ -40,6 +41,7 @@ from backend.preprocessing.soil import reclassify_soil
 log = logging.getLogger(__name__)
 
 BREAKS_FILE = config.ZONES_DIR / "class_breaks.json"
+RAINFALL_BREAKS_FILE = config.RANKED_DIR / "rainfall_breaks.json"
 
 
 # ---------------------------------------------------------------------------
@@ -64,12 +66,37 @@ def reclassify_continuous(values: np.ndarray, breaks, ranks) -> np.ndarray:
     return out
 
 
-def rank_layer(name: str, data: np.ndarray) -> np.ndarray:
+def rainfall_breaks(values: np.ndarray, mode: str = config.RAINFALL_SEASON_MODE) -> list[float]:
+    """Four rainfall breaks (mm): season quintiles ("relative") or the fixed rule."""
+    if mode == "absolute":
+        return list(config.CONTINUOUS_RULES["rainfall"]["breaks"])
+    if mode != "relative":
+        raise ValueError(f"Unknown RAINFALL_SEASON_MODE {mode!r}")
+    vals = np.asarray(values, dtype="float64")
+    vals = vals[np.isfinite(vals)]
+    if vals.size == 0:
+        raise ValueError("Rainfall layer has no valid pixels")
+    brks = [float(b) for b in np.quantile(vals, [0.2, 0.4, 0.6, 0.8])]
+    for i in range(1, len(brks)):
+        if brks[i] <= brks[i - 1]:
+            brks[i] = math.nextafter(brks[i - 1], math.inf)
+    return brks
+
+
+def load_rainfall_breaks(path: Path | None = None) -> dict:
+    """Per-season rainfall classes written by rank_all ({} if not there yet)."""
+    path = path or RAINFALL_BREAKS_FILE
+    return json.loads(path.read_text()) if path.exists() else {}
+
+
+def rank_layer(name: str, data: np.ndarray, breaks=None) -> np.ndarray:
     """Reclassify one processed layer to ranks 1..5 (uint8, 0 = nodata).
 
-    ``name`` is a layer key from config.LAYERS. Rainfall uses the same breaks
-    for every season.
+    ``name`` is a layer key from config.LAYERS. For rainfall, ``breaks``
+    overrides the fixed rule (see rainfall_breaks).
     """
+    if name == "rainfall" and breaks is not None:
+        return reclassify_continuous(data, breaks, [1, 2, 3, 4, 5])
     if name in config.CONTINUOUS_RULES:
         rule = config.CONTINUOUS_RULES[name]
         return reclassify_continuous(data, rule["breaks"], rule["ranks"])
@@ -90,6 +117,7 @@ def rank_all(grid: ReferenceGrid | None = None) -> dict[str, Path]:
     grid = grid or ReferenceGrid.default()
     config.ensure_dirs()
     written = {}
+    rain_info = {}
     jobs = [(n, None) for n in config.LAYERS if n != "rainfall"]
     jobs += [("rainfall", s) for s in config.SEASONS]
     for name, season in jobs:
@@ -99,9 +127,22 @@ def rank_all(grid: ReferenceGrid | None = None) -> dict[str, Path]:
             continue
         if not grid.matches(src):
             raise ValueError(f"{src} is not on the reference grid; re-run preprocessing")
-        ranks = rank_layer(name, read_raster(src))
+        data = read_raster(src)
+        breaks = None
+        if name == "rainfall":
+            breaks = rainfall_breaks(data)
+            ok = data[np.isfinite(data)]
+            rain_info[season] = {
+                "mode": config.RAINFALL_SEASON_MODE, "breaks_mm": [round(b, 1) for b in breaks],
+                "min_mm": round(float(ok.min()), 1), "mean_mm": round(float(ok.mean()), 1),
+                "max_mm": round(float(ok.max()), 1)}
+            log.info("Rainfall %-13s %s classes, breaks %s mm", season, config.RAINFALL_SEASON_MODE,
+                     rain_info[season]["breaks_mm"])
+        ranks = rank_layer(name, data, breaks)
         dst = config.ranked_path(name, season)
         written[dst.stem] = write_raster(dst, ranks, grid, nodata=config.NODATA_RANK)
+    if rain_info:
+        RAINFALL_BREAKS_FILE.write_text(json.dumps(rain_info, indent=2))
     return written
 
 

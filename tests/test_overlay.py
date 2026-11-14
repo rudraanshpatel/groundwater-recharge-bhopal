@@ -55,3 +55,24 @@ def test_zone_statistics():
     assert stats[1]["area_km2"] == pytest.approx(0.5)
     assert stats[1]["percent"] == pytest.approx(50.0)
     assert stats[3]["area_km2"] == 0
+
+
+def test_rainfall_breaks_relative_spreads_dry_season():
+    import numpy as np
+    from backend.overlay import rainfall_breaks, rank_layer
+
+    dry = np.linspace(9, 80, 1000)              # pre-monsoon mm, all below 100
+    absolute = rank_layer("rainfall", dry, rainfall_breaks(dry, "absolute"))
+    assert set(np.unique(absolute)) == {1}
+    relative = rank_layer("rainfall", dry, rainfall_breaks(dry, "relative"))
+    counts = np.bincount(relative, minlength=6)[1:]
+    assert all(150 <= c <= 250 for c in counts)
+
+
+def test_rainfall_breaks_ignore_nodata():
+    import numpy as np
+    from backend.overlay import rainfall_breaks
+
+    vals = np.array([np.nan, 10, 20, 30, 40, 50, np.nan])
+    b = rainfall_breaks(vals, "relative")
+    assert len(b) == 4 and all(10 < x < 50 for x in b)

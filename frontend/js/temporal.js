@@ -4,7 +4,9 @@
  * Switching season re-runs the analysis if a map is already shown, so the
  * change in recharge zones is visible at once. "Compare all seasons" runs
  * the four seasons for the current region and tabulates the class shares.
- * Class breaks are fixed from the annual map, so the seasons are comparable.
+ * Zone breaks are fixed from the annual map. Rainfall is ranked within each
+ * season by default (see RAINFALL_SEASON_MODE in backend/config.py), so the
+ * comparison table also lists each season's absolute rainfall.
  */
 "use strict";
 
@@ -14,7 +16,13 @@
   function seasonNote(id) {
     const s = GWR.config.seasons[id];
     const months = s.months.length === 12 ? "all months" : s.months.map((m) => MONTHS[m - 1]).join(", ");
-    return `Rainfall: mean seasonal total over ${months}. Other layers are static.`;
+    const rain = (GWR.config.rainfall_classes || {})[id];
+    let text = `Rainfall: mean seasonal total over ${months}`;
+    if (rain) {
+      text += ` (${Math.round(rain.min_mm)}-${Math.round(rain.max_mm)} mm, mean ${Math.round(rain.mean_mm)} mm)`;
+      if (rain.mode === "relative") text += ", ranked within this season";
+    }
+    return `${text}. Other layers are static.`;
   }
 
   function buildButtons() {
@@ -59,8 +67,15 @@
         }).join("");
         return `<tr><td><span class="swatch" style="background:${meta.color}"></span>${GWR.escape(meta.name)}</td>${cells}</tr>`;
       }).join("");
-      out.innerHTML = `<table>${head}${rows}</table>
-        <p class="note">Share of the region in each class. Breaks are the same for every season.</p>`;
+      const rainAll = GWR.config.rainfall_classes || {};
+      const rainRow = ids.some((id) => rainAll[id])
+        ? `<tr><td>Mean rainfall</td>${ids.map((id) =>
+            `<td>${rainAll[id] ? Math.round(rainAll[id].mean_mm) + " mm" : "-"}</td>`).join("")}</tr>`
+        : "";
+      const relative = GWR.config.rainfall_mode === "relative";
+      out.innerHTML = `<table>${head}${rows}${rainRow}</table>
+        <p class="note">Share of the region in each class, with the same zone breaks for every season.
+        ${relative ? "Rainfall is ranked within each season, so the maps show where recharge is best in that season; the last row gives the absolute amounts." : ""}</p>`;
     } catch (err) {
       out.innerHTML = `<p class="note error">${GWR.escape(err.message)}</p>`;
     } finally {

@@ -60,15 +60,22 @@ def _run_step(step: str, grid: ReferenceGrid, args) -> bool:
         elif step == "validate":
             from backend.validation import validate
             s = validate()
-            log.info("Validation (%s map): %d wells with pre- and post-monsoon readings",
-                     s["season"], s["wells"])
+            log.info("Validation (%s map): %d usable wells of %d in the map; excluded %s",
+                     s["season"], s["wells"], s["wells_in_map"], s["excluded"] or "none")
+            if s["metric"] == "rise_m":
+                log.info("  No geology file: comparing raw water-level rise (add geology for "
+                         "rise x specific yield)")
             for z in s["zones"]:
                 if z["wells"]:
-                    log.info("  %-9s %3d wells, mean rise %5.2f m, mean post-monsoon depth %5.2f m",
-                             z["name"], z["wells"], z["mean_rise_m"], z["mean_post_depth_m"])
-            if "spearman_gwrpi_vs_rise" in s:
-                r = s["spearman_gwrpi_vs_rise"]
-                log.info("  Spearman GWRPI vs rise: rho = %.3f (p = %.4f)", r["rho"], r["p_value"])
+                    extra = (f", median recharge {z['median_recharge_m']:.3f} m"
+                             if "median_recharge_m" in z else "")
+                    log.info("  %-9s %3d wells, median rise %5.2f m%s", z["name"], z["wells"],
+                             z["median_rise_m"], extra)
+            for col in ("rise_m", "recharge_m", "post_depth_m"):
+                r = s.get(f"spearman_gwrpi_vs_{col}")
+                if r:
+                    log.info("  Spearman GWRPI vs %-12s rho = %6.3f (p = %.4f, n = %d)",
+                             col, r["rho"], r["p_value"], r["n"])
             log.info("  Details: %s (validation_wells.csv, validation_summary.json, validation_boxplot.png)",
                      config.OUTPUT_DIR)
         elif step == "download-rain":

@@ -173,6 +173,19 @@ app itself stays fast at any resolution, because large regions are read at reduc
 
 ---
 
+### Validate against CGWB wells
+
+```bash
+python scripts/download_wells.py          # India-WRIS API, 3 districts, 2014-2024 -> data/raw/wells/wells_raw.csv
+python -m backend.pipeline validate       # -> data/outputs/validation_*.{csv,json,png}
+```
+
+For every well, the mean pre-monsoon (May) minus post-monsoon (November) depth to water is the
+seasonal rise. The step reports the rise per recharge zone, a box plot, and the Spearman
+correlation between GWRPI and rise. A good map shows the rise growing from Very Low to Very High.
+
+---
+
 ## Methodology
 
 ### 1. Common reference grid

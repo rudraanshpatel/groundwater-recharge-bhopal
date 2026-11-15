@@ -1,6 +1,24 @@
 # Data (large, downloaded or generated locally)
+# Raw downloads and float layers stay on Google Drive (see README). The
+# results the web app and the report need are committed: ranked layers,
+# recharge zone maps, class breaks, boundaries, validation and report outputs.
 data/*
 !data/.gitkeep
+!data/processed/
+data/processed/*
+!data/processed/ranked/
+!data/processed/zones/
+data/processed/zones/gwrpi_*.tif
+!data/raw/
+data/raw/*
+!data/raw/boundaries/
+data/raw/boundaries/*
+!data/raw/boundaries/tehsils.gpkg
+!data/raw/boundaries/watersheds.gpkg
+!data/outputs/
+data/outputs/*
+!data/outputs/validation_*
+!data/outputs/report/
 
 # Python
 __pycache__/

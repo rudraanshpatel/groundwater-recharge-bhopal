@@ -1,0 +1,50 @@
+{
+  "annual": {
+    "mode": "relative",
+    "breaks_mm": [
+      1178.4,
+      1243.2,
+      1282.0,
+      1341.0
+    ],
+    "min_mm": 968.0,
+    "mean_mm": 1270.4,
+    "max_mm": 1654.9
+  },
+  "pre_monsoon": {
+    "mode": "relative",
+    "breaks_mm": [
+      24.7,
+      30.5,
+      36.1,
+      42.4
+    ],
+    "min_mm": 12.0,
+    "mean_mm": 33.9,
+    "max_mm": 78.4
+  },
+  "monsoon": {
+    "mode": "relative",
+    "breaks_mm": [
+      1093.2,
+      1142.5,
+      1176.7,
+      1238.0
+    ],
+    "min_mm": 899.3,
+    "mean_mm": 1169.6,
+    "max_mm": 1483.4
+  },
+  "post_monsoon": {
+    "mode": "relative",
+    "breaks_mm": [
+      34.1,
+      37.8,
+      42.2,
+      52.2
+    ],
+    "min_mm": 23.6,
+    "mean_mm": 42.7,
+    "max_mm": 73.7
+  }
+}

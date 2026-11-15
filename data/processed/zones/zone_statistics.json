@@ -1,0 +1,194 @@
+{
+  "annual": {
+    "layers": [
+      "rainfall",
+      "geology",
+      "slope",
+      "soil",
+      "lulc",
+      "drainage_density",
+      "lineament_density"
+    ],
+    "stats": [
+      {
+        "class": 1,
+        "name": "Very Low",
+        "color": "#d7191c",
+        "area_km2": 3493.535,
+        "percent": 19.46
+      },
+      {
+        "class": 2,
+        "name": "Low",
+        "color": "#fdae61",
+        "area_km2": 3676.336,
+        "percent": 20.48
+      },
+      {
+        "class": 3,
+        "name": "Moderate",
+        "color": "#ffffbf",
+        "area_km2": 3401.171,
+        "percent": 18.95
+      },
+      {
+        "class": 4,
+        "name": "High",
+        "color": "#abd9e9",
+        "area_km2": 2645.069,
+        "percent": 14.74
+      },
+      {
+        "class": 5,
+        "name": "Very High",
+        "color": "#2c7bb6",
+        "area_km2": 4734.158,
+        "percent": 26.37
+      }
+    ]
+  },
+  "pre_monsoon": {
+    "layers": [
+      "rainfall",
+      "geology",
+      "slope",
+      "soil",
+      "lulc",
+      "drainage_density",
+      "lineament_density"
+    ],
+    "stats": [
+      {
+        "class": 1,
+        "name": "Very Low",
+        "color": "#d7191c",
+        "area_km2": 8651.048,
+        "percent": 48.19
+      },
+      {
+        "class": 2,
+        "name": "Low",
+        "color": "#fdae61",
+        "area_km2": 3478.904,
+        "percent": 19.38
+      },
+      {
+        "class": 3,
+        "name": "Moderate",
+        "color": "#ffffbf",
+        "area_km2": 2943.614,
+        "percent": 16.4
+      },
+      {
+        "class": 4,
+        "name": "High",
+        "color": "#abd9e9",
+        "area_km2": 2021.22,
+        "percent": 11.26
+      },
+      {
+        "class": 5,
+        "name": "Very High",
+        "color": "#2c7bb6",
+        "area_km2": 855.484,
+        "percent": 4.77
+      }
+    ]
+  },
+  "monsoon": {
+    "layers": [
+      "rainfall",
+      "geology",
+      "slope",
+      "soil",
+      "lulc",
+      "drainage_density",
+      "lineament_density"
+    ],
+    "stats": [
+      {
+        "class": 1,
+        "name": "Very Low",
+        "color": "#d7191c",
+        "area_km2": 3085.699,
+        "percent": 17.19
+      },
+      {
+        "class": 2,
+        "name": "Low",
+        "color": "#fdae61",
+        "area_km2": 3786.349,
+        "percent": 21.09
+      },
+      {
+        "class": 3,
+        "name": "Moderate",
+        "color": "#ffffbf",
+        "area_km2": 3367.869,
+        "percent": 18.76
+      },
+      {
+        "class": 4,
+        "name": "High",
+        "color": "#abd9e9",
+        "area_km2": 2608.097,
+        "percent": 14.53
+      },
+      {
+        "class": 5,
+        "name": "Very High",
+        "color": "#2c7bb6",
+        "area_km2": 5102.255,
+        "percent": 28.42
+      }
+    ]
+  },
+  "post_monsoon": {
+    "layers": [
+      "rainfall",
+      "geology",
+      "slope",
+      "soil",
+      "lulc",
+      "drainage_density",
+      "lineament_density"
+    ],
+    "stats": [
+      {
+        "class": 1,
+        "name": "Very Low",
+        "color": "#d7191c",
+        "area_km2": 8177.65,
+        "percent": 45.56
+      },
+      {
+        "class": 2,
+        "name": "Low",
+        "color": "#fdae61",
+        "area_km2": 2983.13,
+        "percent": 16.62
+      },
+      {
+        "class": 3,
+        "name": "Moderate",
+        "color": "#ffffbf",
+        "area_km2": 3443.774,
+        "percent": 19.19
+      },
+      {
+        "class": 4,
+        "name": "High",
+        "color": "#abd9e9",
+        "area_km2": 1954.579,
+        "percent": 10.89
+      },
+      {
+        "class": 5,
+        "name": "Very High",
+        "color": "#2c7bb6",
+        "area_km2": 1391.136,
+        "percent": 7.75
+      }
+    ]
+  }
+}

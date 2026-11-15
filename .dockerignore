@@ -1,0 +1,11 @@
+.git
+.github
+notebooks
+tests
+scripts
+docs
+**/__pycache__
+*.pyc
+data/raw/*
+!data/raw/boundaries
+data/outputs/report

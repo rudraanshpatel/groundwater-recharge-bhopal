@@ -1,0 +1,67 @@
+{
+  "season": "annual",
+  "wells_in_map": 88,
+  "wells": 60,
+  "excluded": {
+    "fewer than 3 years": 18,
+    "deep well / piezometer": 10
+  },
+  "metric": "recharge_m",
+  "zones": [
+    {
+      "class": 1,
+      "name": "Very Low",
+      "wells": 17,
+      "median_rise_m": 3.808,
+      "median_recharge_m": 0.089,
+      "median_post_depth_m": 5.374
+    },
+    {
+      "class": 2,
+      "name": "Low",
+      "wells": 15,
+      "median_rise_m": 2.571,
+      "median_recharge_m": 0.111,
+      "median_post_depth_m": 6.247
+    },
+    {
+      "class": 3,
+      "name": "Moderate",
+      "wells": 11,
+      "median_rise_m": 2.772,
+      "median_recharge_m": 0.122,
+      "median_post_depth_m": 5.125
+    },
+    {
+      "class": 4,
+      "name": "High",
+      "wells": 6,
+      "median_rise_m": 2.986,
+      "median_recharge_m": 0.136,
+      "median_post_depth_m": 4.671
+    },
+    {
+      "class": 5,
+      "name": "Very High",
+      "wells": 11,
+      "median_rise_m": 2.792,
+      "median_recharge_m": 0.238,
+      "median_post_depth_m": 4.536
+    }
+  ],
+  "spearman_gwrpi_vs_rise_m": {
+    "rho": -0.162,
+    "p_value": 0.2157,
+    "n": 60
+  },
+  "spearman_gwrpi_vs_recharge_m": {
+    "rho": 0.361,
+    "p_value": 0.0046,
+    "n": 60
+  },
+  "spearman_gwrpi_vs_post_depth_m": {
+    "rho": -0.067,
+    "p_value": 0.6094,
+    "n": 60
+  }
+}

@@ -1,0 +1,721 @@
+{
+  "seasons": {
+    "annual": {
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 3350.5695,
+          "percent": 19.028781808450756
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 3600.2529,
+          "percent": 20.446800727262058
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 3330.4491,
+          "percent": 18.914512666593303
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 2626.3926,
+          "percent": 14.915987186276745
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 4700.2392,
+          "percent": 26.69391761141714
+        }
+      ],
+      "total_km2": 17607.903299999998,
+      "rain": {
+        "mean": 1354.78271484375,
+        "min": 1127.896728515625,
+        "max": 1654.8800048828125
+      }
+    },
+    "pre_monsoon": {
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 8495.4852,
+          "percent": 48.2481363922529
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 3416.3298,
+          "percent": 19.402252169342617
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 2869.4168999999997,
+          "percent": 16.2961872922144
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 1990.431,
+          "percent": 11.304190885691654
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 836.2404,
+          "percent": 4.749233260498427
+        }
+      ],
+      "total_km2": 17607.903299999998,
+      "rain": {
+        "mean": 33.92847442626953,
+        "min": 22.180683135986328,
+        "max": 51.31865310668945
+      }
+    },
+    "monsoon": {
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 2948.5683,
+          "percent": 16.745709297483476
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 3694.455,
+          "percent": 20.98179968991538
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 3313.1322,
+          "percent": 18.81616535229382
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 2585.5443,
+          "percent": 14.68399874731252
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 5066.2035,
+          "percent": 28.772326912994803
+        }
+      ],
+      "total_km2": 17607.903299999998,
+      "rain": {
+        "mean": 1252.5235595703125,
+        "min": 1047.8631591796875,
+        "max": 1483.4393310546875
+      }
+    },
+    "post_monsoon": {
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 8003.565,
+          "percent": 45.454389790975284
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 2933.2601999999997,
+          "percent": 16.65877049654174
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 3376.2861,
+          "percent": 19.174833269330822
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 1925.5167,
+          "percent": 10.93552518544329
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 1369.2753,
+          "percent": 7.776481257708861
+        }
+      ],
+      "total_km2": 17607.903299999998,
+      "rain": {
+        "mean": 42.00215148925781,
+        "min": 29.461973190307617,
+        "max": 61.529842376708984
+      }
+    }
+  },
+  "tehsils": [
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Sohagpur",
+      "total_km2": 1624.5620999999999,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 29.2806,
+          "percent": 1.8023687737144674
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 214.6563,
+          "percent": 13.213179108388655
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 293.8311,
+          "percent": 18.08678781808341
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 428.4747,
+          "percent": 26.37478124104951
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 658.3194,
+          "percent": 40.52288305876396
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Bareli",
+      "total_km2": 1399.9383,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 31.1742,
+          "percent": 2.2268267108629
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 112.5414,
+          "percent": 8.039025719919227
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 151.7463,
+          "percent": 10.83949914078356
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 279.82349999999997,
+          "percent": 19.98827376892253
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 824.6528999999999,
+          "percent": 58.90637465951178
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Gairatganj",
+      "total_km2": 894.654,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 22.8384,
+          "percent": 2.552763414683218
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 144.4275,
+          "percent": 16.143391746977045
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 268.5177,
+          "percent": 30.0135806691749
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 107.6859,
+          "percent": 12.036597388487616
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 351.1845,
+          "percent": 39.25366678067722
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Silvani",
+      "total_km2": 1279.1843999999999,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 770.1795,
+          "percent": 60.20863762878909
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 183.2256,
+          "percent": 14.323626835974547
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 265.5387,
+          "percent": 20.75843795468425
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 33.5844,
+          "percent": 2.6254541565703895
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 26.6562,
+          "percent": 2.0838434239817185
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Begamganj",
+      "total_km2": 861.6204,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 343.8252,
+          "percent": 39.90448694111699
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 248.0985,
+          "percent": 28.794408767480437
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 256.09319999999997,
+          "percent": 29.72227677060571
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 4.9311,
+          "percent": 0.5723053910979824
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 8.6724,
+          "percent": 1.0065221296988789
+        }
+      ]
+    },
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Piparia",
+      "total_km2": 1691.4905999999999,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 167.73839999999998,
+          "percent": 9.916602551619263
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 291.8655,
+          "percent": 17.254928877523763
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 481.2822,
+          "percent": 28.453140679587577
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 360.0648,
+          "percent": 21.286834227751548
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 390.5397,
+          "percent": 23.088493663517845
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Udaipura",
+      "total_km2": 815.4684,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 524.8521,
+          "percent": 64.3620402703526
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 129.96359999999999,
+          "percent": 15.937294443291732
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 155.664,
+          "percent": 19.08890644934862
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 0.8684999999999999,
+          "percent": 0.10650320723647906
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 4.1202,
+          "percent": 0.5052556297705711
+        }
+      ]
+    },
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Seonimalwa",
+      "total_km2": 1294.4754,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 126.2421,
+          "percent": 9.752375363796022
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 161.4861,
+          "percent": 12.47502270031551
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 283.1553,
+          "percent": 21.87413526746047
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 468.4122,
+          "percent": 36.18548486900562
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 255.1797,
+          "percent": 19.712981799422376
+        }
+      ]
+    },
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Itarsi",
+      "total_km2": 1018.2492,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 40.9626,
+          "percent": 4.022846273780525
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 83.9295,
+          "percent": 8.24253041396939
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 182.5452,
+          "percent": 17.92736002149572
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 347.1732,
+          "percent": 34.09511149137166
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 363.6387,
+          "percent": 35.7121517993827
+        }
+      ]
+    },
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Hoshangabad",
+      "total_km2": 396.7704,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 0.1035,
+          "percent": 0.02608561525758978
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 1.8620999999999999,
+          "percent": 0.46931424319959353
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 9.584999999999999,
+          "percent": 2.4157548042898362
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 30.0276,
+          "percent": 7.568004064819352
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 355.1922,
+          "percent": 89.52084127243363
+        }
+      ]
+    },
+    {
+      "district": "Hoshangabad",
+      "tehsil": "Babai",
+      "total_km2": 574.2396,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 0.522,
+          "percent": 0.0909028217489703
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 6.3585,
+          "percent": 1.1072904063042674
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 21.6801,
+          "percent": 3.775444953639561
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 132.6807,
+          "percent": 23.105459811549046
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 412.9983,
+          "percent": 71.92090200675815
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Goharganj",
+      "total_km2": 1787.7753,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 199.58939999999998,
+          "percent": 11.164121128645194
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 436.6809,
+          "percent": 24.42593876310966
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 379.8558,
+          "percent": 21.247401728841428
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 212.7294,
+          "percent": 11.899112824749285
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 558.9198,
+          "percent": 31.263425554654436
+        }
+      ]
+    },
+    {
+      "district": "Bhopal",
+      "tehsil": "Bhopal",
+      "total_km2": 1308.6036,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 343.6929,
+          "percent": 26.264095559572052
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 508.7106,
+          "percent": 38.87430846132473
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 257.2083,
+          "percent": 19.655172888107597
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 141.174,
+          "percent": 10.788140885444607
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 57.8178,
+          "percent": 4.418282205551017
+        }
+      ]
+    },
+    {
+      "district": "Raisen",
+      "tehsil": "Raisen",
+      "total_km2": 1319.8743,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 277.64279999999997,
+          "percent": 21.03554861247014
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 382.8033,
+          "percent": 29.003011877721992
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 168.885,
+          "percent": 12.795536665877956
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 68.0733,
+          "percent": 5.157559322126357
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 422.4699,
+          "percent": 32.00834352180355
+        }
+      ]
+    },
+    {
+      "district": "Bhopal",
+      "tehsil": "Berasia",
+      "total_km2": 1340.9973,
+      "rows": [
+        {
+          "class": 1,
+          "zone": "Very Low",
+          "area_km2": 471.9258,
+          "percent": 35.19215139359341
+        },
+        {
+          "class": 2,
+          "zone": "Low",
+          "area_km2": 693.6435,
+          "percent": 51.7259430723686
+        },
+        {
+          "class": 3,
+          "zone": "Moderate",
+          "area_km2": 154.8612,
+          "percent": 11.548211170894975
+        },
+        {
+          "class": 4,
+          "zone": "High",
+          "area_km2": 10.6893,
+          "percent": 0.7971156988906689
+        },
+        {
+          "class": 5,
+          "zone": "Very High",
+          "area_km2": 9.8775,
+          "percent": 0.7365786642523441
+        }
+      ]
+    }
+  ]
+}

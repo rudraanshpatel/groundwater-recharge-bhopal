@@ -1,0 +1,13 @@
+# Runtime dependencies of the web app only (used by the Dockerfile).
+# The full pipeline (preprocessing, validation, notebooks) needs requirements.txt.
+fastapi==0.163.1
+uvicorn[standard]==0.54.0
+pydantic==2.14.3
+numpy==2.5.4
+pandas==3.1.1
+rasterio==1.5.2
+geopandas==1.2.0
+pyogrio==0.13.0
+shapely==2.2.0
+pyproj==3.8.0
+matplotlib==3.11.2

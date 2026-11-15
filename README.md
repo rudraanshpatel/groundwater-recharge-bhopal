@@ -12,6 +12,9 @@ pipeline is open-source Python: no ArcGIS or other desktop GIS is needed.
 toggle** (Annual, Pre-monsoon, Monsoon, Post-monsoon) built from IMD daily rainfall, with class
 breaks held fixed so the seasons are directly comparable, and lets you edit the AHP weights live.
 
+**Live app:** https://rudraanshpatel.in/projects/groundwater-recharge/ (hosted on a Hugging Face
+Space, see [docs/DEPLOY.md](docs/DEPLOY.md)).
+
 ## Results at a glance
 
 | | |
@@ -271,6 +274,12 @@ gives no agreement (ρ = −0.15).
 curl -X POST http://127.0.0.1:8000/analyze -H "Content-Type: application/json" \
   -d '{"region_type": "tehsil", "region_id": "tehsil-4", "season": "monsoon"}'
 ```
+
+## Deployment
+
+The app is packaged as a Docker image (`Dockerfile`, `requirements-app.txt`) and deployed to a
+Hugging Face Space on every push to `main` by `.github/workflows/deploy-space.yml`. Setup steps
+are in [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Limitations
 

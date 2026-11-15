@@ -45,6 +45,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import rasterio  # noqa: E402
 from matplotlib.colors import BoundaryNorm, ListedColormap  # noqa: E402
+from matplotlib import patheffects  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import Patch, Rectangle  # noqa: E402
 from pyproj import Transformer  # noqa: E402
@@ -217,7 +218,8 @@ def _scale_bar(ax, study: Study, length_km: float | None = None, loc=(0.05, 0.05
     for frac in ((0, 1.0) if small else (0, 0.5, 1.0)):
         ax.text(bx + frac * length_km * 1000, by + 1.6 * h,
                 f"{frac * length_km:g}" + (" km" if frac == 1.0 else ""),
-                ha="center", va="bottom", fontsize=5.5 if small else 7, zorder=20)
+                ha="center", va="bottom", fontsize=5.5 if small else 7, zorder=20,
+                path_effects=[patheffects.withStroke(linewidth=2, foreground="white")])
 
 
 def _boundaries(ax, study: Study, labels: bool = False):
@@ -266,8 +268,10 @@ def _categorical(ax, study, arr, codes, colors, labels, legend_title, loc="lower
               norm=BoundaryNorm(np.arange(-0.5, len(codes) + 0.5), len(codes)), zorder=2)
     present = [i for i in range(len(codes)) if np.any(idx == i)]
     handles = [Patch(facecolor=colors[i], edgecolor="#555555", lw=0.4, label=labels[i]) for i in present]
-    return ax.legend(handles=handles, title=legend_title, loc=loc, frameon=True, framealpha=0.9,
-                     edgecolor="#888888", ncol=ncol)
+    leg = ax.legend(handles=handles, title=legend_title, loc=loc, frameon=True, framealpha=0.95,
+                    edgecolor="#888888", ncol=ncol)
+    leg.set_zorder(50)
+    return leg
 
 
 def _classified(ax, study, arr, breaks, colors, unit, legend_title, ranks, loc="lower right"):
@@ -461,12 +465,14 @@ def fig_location(study: Study, out: Path, dpi: int, india_file: Path | None):
                Line2D([], [], color="#444444", lw=0.5, label="Tehsil boundary"),
                Patch(facecolor=WATER_COLOR, label="Rivers / water bodies"),
                Line2D([], [], marker="*", color="none", mfc="#c00000", mec="white", ms=10, label="Bhopal city")]
-    ax.legend(handles=handles, loc="lower right", framealpha=0.9, edgecolor="#888888")
-    _frame(ax, study, "Study area: Bhopal, Raisen and Narmadapuram districts")
+    ax.legend(handles=handles, loc="lower right", framealpha=0.95, edgecolor="#888888").set_zorder(50)
+    _frame(ax, study, "Study area: Bhopal, Raisen and Narmadapuram districts", north=False)
+    _north_arrow(ax, x=0.06)
 
     india = _load_india(india_file)
     if india is not None:
-        ins = ax.inset_axes([0.0, 0.70, 0.30, 0.30])
+        ins = ax.inset_axes([0.70, 0.70, 0.30, 0.30])
+        ins.set_zorder(60)
         india.plot(ax=ins, facecolor="#f2f2f2", edgecolor="#888888", lw=0.25)
         mp = india[india.iloc[:, 0].astype(str).str.contains("Madhya Pradesh")] if len(india.columns) else None
         if mp is not None and len(mp):
@@ -559,7 +565,7 @@ def fig_continuous_classes(study, out, dpi, name, fig_name, title, unit, legend_
             lines.plot(ax=ax, color="black", lw=0.35, zorder=9)
             ax.add_artist(leg)
             ax.legend(handles=[Line2D([], [], color="black", lw=0.8, label="Mapped lineaments / faults (GSI)")],
-                      loc="upper left", framealpha=0.9, edgecolor="#888888")
+                      loc="upper left", framealpha=0.95, edgecolor="#888888").set_zorder(50)
         except Exception as exc:  # noqa: BLE001
             print(f"  (could not draw {lines_file.name}: {exc})")
     _frame(ax, study, title)
@@ -666,7 +672,7 @@ def fig_wells(study, out, dpi):
     if len(excl):
         hs.append(Line2D([], [], marker="x", color="#555555", ls="none", ms=5,
                          label=f"Wells excluded ({len(excl)})"))
-    ax.legend(handles=hs, loc="upper left", framealpha=0.9, edgecolor="#888888")
+    ax.legend(handles=hs, loc="upper left", framealpha=0.95, edgecolor="#888888").set_zorder(50)
     _frame(ax, study, "CGWB observation wells used for validation")
     return _save(fig, out, "fig_4_3_wells.png", dpi)
 

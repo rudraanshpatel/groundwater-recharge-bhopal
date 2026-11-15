@@ -78,7 +78,7 @@ groundwater-recharge-bhopal/
 ├── notebooks/exploration.ipynb   figures of every layer, zones and the GWRPI histogram
 ├── docs/DATA_DOWNLOAD.md    step-by-step data download guide (Windows / PowerShell)
 ├── tests/                   pytest suite (unit + end-to-end on synthetic data)
-└── data/                    local data, not committed
+└── data/                    processed results committed; raw downloads on Google Drive
 ```
 
 ## Setup
@@ -96,8 +96,14 @@ pip install -r requirements.txt
 
 ### Get the data
 
-The processed and raw data are too large for GitHub. To run the project on real data, download the
-data folder from Google Drive:
+**To see the results, nothing needs downloading.** The repository includes the processed results
+for the real data: the ranked thematic layers (`data/processed/ranked/`), the recharge zone maps for
+every season (`data/processed/zones/`), the tehsil and watershed boundaries, the validation outputs
+(`data/outputs/validation_*`) and the report figures and tables (`data/outputs/report/`). After
+[Setup](#setup), start the app with `uvicorn backend.app:app` and open http://127.0.0.1:8000.
+
+The raw downloads and the intermediate float layers are too large for GitHub. To rerun the
+pipeline from scratch, download the data folder from Google Drive:
 
 **[Project data (Google Drive)](https://drive.google.com/drive/folders/1fQPq_4LZCuQLyWbn8kxlXo7qyZnqQWAV?usp=drive_link)**
 
@@ -120,6 +126,16 @@ uvicorn backend.app:app --reload
 
 Open http://127.0.0.1:8000, pick a region, press **Generate recharge map**, then try the season
 buttons. API docs are at http://127.0.0.1:8000/docs.
+
+### Report figures and tables
+
+```bash
+python scripts/report_figures.py     # -> data/outputs/report/
+```
+
+Writes the zone-area tables (`tables.md`, CSVs, also by tehsil) and every map in the report:
+location map, the seven thematic layers, the annual and seasonal recharge maps, the validation
+wells and the zone-area bar chart, at 300 dpi.
 
 ### Tests
 

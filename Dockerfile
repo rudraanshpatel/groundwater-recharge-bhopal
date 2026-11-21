@@ -1,5 +1,4 @@
 # Web app image: FastAPI backend + Leaflet frontend + the committed processed data.
-# Used for the Hugging Face Space (port 7860); runs anywhere Docker runs.
 #
 #   docker build -t gwr .
 #   docker run -p 7860:7860 gwr      ->  http://localhost:7860
@@ -14,7 +13,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Hugging Face Spaces run the container as user 1000
+# Run as a non-root user
 RUN useradd -m -u 1000 app
 WORKDIR /app
 
